@@ -1,0 +1,29 @@
+CLI=
+
+START REMOTE OUTPUT
+prints as=>*****Bytes in hex=7 
+END REMOTE OUTPUT 1 = 1
+CLI=atz
+
+START REMOTE OUTPUT
+prints as=>a*****Bytes in hex=61 
+END REMOTE OUTPUT 1 = 2
+START REMOTE OUTPUT
+prints as=>t*****Bytes in hex=74 
+END REMOTE OUTPUT 1 = 3
+START REMOTE OUTPUT
+prints as=>z*****Bytes in hex=7a 
+END REMOTE OUTPUT 1 = 4
+START REMOTE OUTPUT
+prints as=>*****Bytes in hex=7 
+END REMOTE OUTPUT 1 = 5
+CLI=
+
+START REMOTE OUTPUT
+prints as=>*****Bytes in hex=7 
+END REMOTE OUTPUT 1 = 6
+CLI=
+
+START REMOTE OUTPUT
+prints as=>*****Bytes in hex=7 
+END REMOTE OUTPUT 1 = 7
