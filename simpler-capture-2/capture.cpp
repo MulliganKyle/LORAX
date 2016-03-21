@@ -13,6 +13,7 @@ using namespace std;
 
 #define HRES 320 
 #define VRES 240
+#define FPS 1
 
 
 int main( int argc, char** argv )
@@ -25,6 +26,7 @@ int main( int argc, char** argv )
 
     cap.set(CAP_PROP_FRAME_HEIGHT, HRES);
     cap.set(CAP_PROP_FRAME_WIDTH, VRES);
+    cap.set(CAP_PROP_FPS, FPS);
 
     while(1)
     {
