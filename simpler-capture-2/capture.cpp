@@ -4,7 +4,7 @@
  *
  */
 #include <iostream>
-
+#include <unistd.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -34,5 +34,6 @@ int main( int argc, char** argv )
      
         imshow("frame", frame);
         if(waitKey(30) >= 0) break;
+
     }   
 }
