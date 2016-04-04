@@ -28,16 +28,15 @@ int main()
 
    std::string RPM="010C\r";
    std::string Speed="010D\r";
-
+   
    uart.sendLine("ATZ\r");
-
+   
    trash(100000000);
 
    outputString = uart.receiveLineString();
    std::cout << outputString << std::endl;
 
    uart.sendLine(RPM);
-
 //   trash(50000000);
 
    outputString = uart.receiveLineData("010C41 0C");
