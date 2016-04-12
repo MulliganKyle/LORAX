@@ -18,6 +18,7 @@ int main(){
    // Instantiate the I2c Object
    myI2C *sensorptr0 = new myI2C();
    myI2C *sensorptr1 = new myI2C();
+   myI2C *sensorptr2 = new myI2C();
    
 
    unsigned char value;
@@ -27,6 +28,9 @@ int main(){
 
    sensorptr0->i2cSetAddress(DEVICE_ADDR0);
    sensorptr1->i2cSetAddress(DEVICE_ADDR1);
+   sensorptr2->i2cSetAddress(0x76);
+
+   sensorptr2->Set_Mux();
    usleep(500E3);
 
 
@@ -46,13 +50,13 @@ int main(){
       
 
       //Sensor1
-      sensorptr1->Send_I2C_Byte(CTRL_REG1, 0x51);
+      /*sensorptr1->Send_I2C_Byte(CTRL_REG1, 0x51);
 
       usleep(68E3);
 
 
       cout<< "I2C 1: " << endl;
-      value1 = sensorptr1->Read_All_I2C_Byte(0x0);
+      value1 = sensorptr1->Read_All_I2C_Byte(0x0);*/
       
       usleep(500E3);
    }

@@ -23,7 +23,7 @@ int main()
    UART uart;
 
    std::string outputString;
-
+   int outData;
    uart.initUart();
 
    std::string RPM="010C\r";
@@ -39,9 +39,9 @@ int main()
    uart.sendLine(RPM);
 //   trash(50000000);
 
-   outputString = uart.receiveLineData("010C41 0C");
+   outData = uart.receiveLineData("010C41 0C");
 
-   std::cout << outputString << std::endl;
+   std::cout << outData << std::endl;
 
    //return 1;
 }

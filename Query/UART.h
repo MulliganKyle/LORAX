@@ -38,7 +38,7 @@ class UART {
       uint8_t receiveChar();
 
       std::string receiveLineString();
-      int receiveLineData(std::string);
+      int receiveLineData(std::string, int);
 
    private:
       int fd;

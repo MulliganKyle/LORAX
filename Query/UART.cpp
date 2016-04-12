@@ -114,14 +114,15 @@ std::string UART::receiveLineString()
    {
       if(nextChar !='\r')
       {
-	 std::cout << nextChar<< std::endl;
+	 std::cout<< nextChar << std::endl;
+
 	 receivedString+=nextChar;
       }
    }
    return receivedString;
 }
 
-int UART::receiveLineData(std::string command)
+int UART::receiveLineData(std::string command, int length)
 {
    char nextChar;
    std::string receivedString;
@@ -146,17 +147,24 @@ int UART::receiveLineData(std::string command)
       {
 	 commandFound=1;
       }
+      usleep(1);
    }
 
-   while(count<=5)
+   while(count<=length)
    {
 
       if(read(fd, &nextChar, 1)==1)
       {
-	 data+=nextChar;
+	 dataStr+=nextChar;
 	 count++;
       }
+      usleep(1);
    }
+   if(length>4)
+   {
+      dataStr.erase(2,1);
+   }
+
    data = std::stoi(dataStr, NULL, 16);
 
    return data;

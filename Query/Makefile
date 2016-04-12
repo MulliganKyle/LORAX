@@ -12,7 +12,7 @@ OUTPUTNAME=OBD2demo
 
 #all the project files
 #REPLACE THESE FILES WITH YOUR PROJECT FILES!!!!
-PRJSRC=main.cpp UART.cpp
+PRJSRC=main.cpp UART.cpp i2c.cpp
 
 #project files as .o files
 OBJECTS= $(PRJSRC:.cpp=.o)

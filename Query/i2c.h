@@ -28,10 +28,10 @@ class myI2C {
    // Sends a single byte <Data> to <DEVICE_ADDR> on the register <Reg_ADDR>
    void Send_I2C_Byte(unsigned char Reg_ADDR, unsigned char Data);	
 
-   void Set_Mux();
-
    // Reads and returns a single byte from <DEVICE_ADDR> on the register <Reg_ADDR>
    unsigned char Read_I2C_Byte(unsigned char Reg_ADDR);
+
+   int Read_2I2C_Bytes(unsigned char Reg_ADDR);
 
    // Reads multipes byte from <DEVICE_ADDR> starting from the register address <Reg_ADDR>.
    // Read the output from i2cptr->I2C_RD_Buf

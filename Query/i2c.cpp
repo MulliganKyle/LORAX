@@ -67,20 +67,6 @@ void myI2C::Send_I2C_Byte(unsigned char Reg_ADDR, unsigned char Data){
 
 }
 
-void myI2C::Set_Mux()
-{
-   //i2cSetAddress(DEVICE_ADDR);
-   //cout << "beagle-i2c writing 0x"<< hex << (int)Data <<" to 0x"<<hex <<(int)DEVICE_ADDR << ", reg 0x" <<hex<<(int)Reg_ADDR <<"... ";
-   I2C_WR_Buf[0] = 0x04;
-
-
-   if(write(i2cFile, I2C_WR_Buf, 1) != 1) {
-      perror("Write Error in myI2C::Send_I2C_Byte");
-      cout << endl;
-   }
-   else cout << "OK" << endl;
-}
-
 
 unsigned char myI2C::Read_I2C_Byte(unsigned char Reg_ADDR){
    I2C_WR_Buf[0] = Reg_ADDR;
@@ -98,6 +84,25 @@ unsigned char myI2C::Read_I2C_Byte(unsigned char Reg_ADDR){
    }
 
    return (I2C_RD_Buf[0]);
+}
+
+int myI2C::Read_2I2C_Bytes(unsigned char Reg_ADDR){
+   I2C_WR_Buf[0] = Reg_ADDR;
+   int output;
+   //i2cSetAddress(DEVICE_ADDR);
+
+   if(write(i2cFile, I2C_WR_Buf, 1) != 1) {
+      perror("Write Error in myI2C::Read_I2C_Byte");
+   }
+
+   //usleep(100E3);
+   //i2cSetAddress(DEVICE_ADDR);	
+   if(read(i2cFile, I2C_RD_Buf, 2) != 1){
+      perror("Read Error myI2C::Read_I2C_Byte");
+   }
+
+   output=I2C_RD_Buf[0]*256+I2C_RD_Buf[1];
+   return output;
 }
 
 unsigned char myI2C::Read_Multi_Byte(unsigned char Reg_ADDR, size_t n){
