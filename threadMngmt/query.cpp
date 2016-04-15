@@ -1,23 +1,10 @@
-
-#include "UART.h"
-#include "i2c.h"
-
-#include <ctime>
-#include <stdint.h>
-#include <iostream>
-#include <string>
-#include <time.h>
-#include <glib.h> 
-#include <fcntl.h>
-
-#define DEVICE_ADDR0 0x70
-#define DEVICE_ADDR1 0x71
+//Query thread
+#include "query.hpp"
 
 
-   static gboolean
-onButtonEvent( GIOChannel *channel,
-      GIOCondition condition,
-      gpointer user_data )
+static gboolean onButtonEvent(GIOChannel *channel,
+			      GIOCondition condition,
+			      gpointer user_data)
 {
    std::cerr << "onButtonEvent" << std::endl;
    GError *error = 0;
@@ -35,25 +22,12 @@ onButtonEvent( GIOChannel *channel,
    return 1;
 }
 
-int main()
+
+void query()
 {
    UART uart;
-   //   myI2C *sensorPtr0 = new myI2C();
-   //   myI2C *sensorPtr1 = new myI2C();
-
-   //Globals at some point
-   //===============================
-   int curSpeed;
-   int curRPM;
-   int initFuel, prevFuel, curFuel;
-   int initDist, curDist;
-   int curTemp;
-   time_t rawTime;
-   struct tm *prevTime, *curTime;
-   int timeOffset=-7;
-   int leftDist, rightDist;
-   bool mode=1;
-   //===============================
+   myI2C *sensorPtr0 = new myI2C();
+   myI2C *sensorPtr1 = new myI2C();
 
    std::string RPM="010C\r";
    std::string Speed="010D\r";
@@ -61,8 +35,8 @@ int main()
    std::string Fuel="012F\r";
    std::string Dist="0131\r";
 
-   //   sensorPtr0->i2cSetAddress(DEVICE_ADDR0);
-   //   sensorPtr1->i2cSetAddress(DEVICE_ADDR1);
+   sensorPtr0->i2cSetAddress(DEVICE_ADDR0);
+   sensorPtr1->i2cSetAddress(DEVICE_ADDR1);
 
    uart.initUart();
 
@@ -74,7 +48,7 @@ int main()
    guint id = g_io_add_watch( channel, cond, onButtonEvent, 0 );
 
 
-   usleep(5000000);
+   usleep(500000);
 
 
 
@@ -175,12 +149,12 @@ int main()
 	 //======================================
 	 if(curSpeed > 49)
 	 {
-	    //sensorPtr0->Send_I2C_Byte(0x00, 0x51);
-	    //usleep(68E3);
-	    //leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
-	    //sensorPtr1->Send_I2C_Byte(0x00, 0x51);
-	    //usleep(68E3);
-	    //rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);
+	    sensorPtr0->Send_I2C_Byte(0x00, 0x51);
+	    usleep(68E3);
+	    leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
+	    sensorPtr1->Send_I2C_Byte(0x00, 0x51);
+	    usleep(68E3);
+	    rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);
 	 }
 	 //======================================
 
@@ -193,21 +167,14 @@ int main()
       {
 	 //Query reverse distance as much as possible
 	 //======================================
-	 /*sensorPtr0->Send_I2C_Byte(0x00, 0x51);
-	   usleep(68E3);
-	   leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
-	   sensorPtr1->Send_I2C_Byte(0x00, 0x51);
-	   usleep(68E3);
-	   rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);*/
+	 sensorPtr0->Send_I2C_Byte(0x00, 0x51);
+	 usleep(68E3);
+	 leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
+	 sensorPtr1->Send_I2C_Byte(0x00, 0x51);
+	 usleep(68E3);
+	 rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);
 	 //======================================
 
       }
-
-
    }
-
-
-
-
-
 }

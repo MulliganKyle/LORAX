@@ -2,14 +2,14 @@
 #include <fcntl.h>
 #include <iostream>
 
-using namespace std; 
-
+ 
+bool mode;
    static gboolean
 onButtonEvent( GIOChannel *channel,
       GIOCondition condition,
       gpointer user_data )
 {
-   cerr << "onButtonEvent" << endl;
+   std::cerr << "onButtonEvent" << std::endl;
    GError *error = 0;
    gsize bytes_read = 0; 
    const int buf_sz = 1024;
@@ -19,8 +19,9 @@ onButtonEvent( GIOChannel *channel,
 	 buf, buf_sz - 1,
 	 &bytes_read,
 	 &error );
-   cerr << "rc:" << rc << " data:" << buf << endl;
+   std::cerr << "rc:" << rc << " data:" << buf << std::endl;
 
+mode=buf;
    // thank you, call again!
    return 1;
 }

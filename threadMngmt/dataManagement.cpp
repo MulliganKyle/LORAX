@@ -1,36 +1,9 @@
-#include <fstream>
-#include <ctime>
-#include <stdint.h>
-#include <iostream>
-#include <string>
-#include <time.h>
+//Data Management Thread
+#include "dataManagement.hpp"
 
 
-
-int main()
+void dataManagement()
 {
-   int curSpeed;
-   int curRPM;
-   int initFuel, prevFuel, curFuel;
-   int initDist, curDist;
-   int curTemp;
-   time_t rawTime;
-   struct tm *prevTime, *curTime;
-   int timeOffset=-7;
-   int leftDist, rightDist;
-   bool mode;
-   bool englishUnits=0;
-   int speedLimit;
-
-   int RPMdata;
-   int tempData;
-   int speedData;
-   int rearData;
-   float tankSizeLiters;
-   float tankSizeGallons;
-   float fuelEcon;
-
-   //these are not globals
    float fuelUsed;
    float distTravelled;
    float speedMiles;
@@ -126,6 +99,9 @@ int main()
 	 distTravelled=curDist-initDist;
 	 distTravelledMiles=(distTravelled*5)/8;
 	 fuelUsed=( (((float)initFuel*100)/255)-(((float)curFuel*100)/255))*tankSizeGallons;
+	 //calculate the actual RPM
+	 RPMdata=curRPM/4;
+
 	 fuelEcon=(fuelUsed/distTravelled)*100;
 
 	 //determine which rear distance is closer
