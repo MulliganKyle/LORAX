@@ -4,6 +4,39 @@
 
 void dataManagement()
 {
+
+/////////////////////////////
+//Globals used by query thread
+extern int curSpeed;
+extern int curRPM;
+extern int initFuel, curFuel;
+extern int initDist, curDist;
+extern int curTemp;
+extern int leftDist, rightDist;
+
+//Time Globals
+extern struct tm *curTime;
+
+//Initialization and Control Globals
+extern int speedLimit;
+extern bool forwardMode;
+extern bool englishUnits;
+
+//Data Management Globals
+extern int speedData;
+extern int RPMdata;
+extern int tempData;
+extern int rearData;
+extern float tankSizeLiters;
+extern float tankSizeGallons;
+//float fuelUsed;
+extern float fuelEcon;
+//float distTravelled;
+
+/////////////////////////////
+
+
+
    float fuelUsed;
    float distTravelled;
    float speedMiles;
@@ -11,6 +44,8 @@ void dataManagement()
    float distTravelledMiles;
    std::fstream log;
    std::string timeStr;
+
+   bool overSpeed=0;
 
 
 
@@ -44,7 +79,7 @@ void dataManagement()
 	    //this means there was no object within range
 	    //so set rear data to a large number so the GUI
 	    //will know to say something like no objects detected
-	    rearData=MAX_INT;
+	    rearData=-1;
 	 }
 	 else
 	 {
@@ -68,8 +103,10 @@ void dataManagement()
 
 	 //if speed > the user set speed limit
 	 //activate audio script and data log
-	 if(speedData>speedLimit)
+	 if(speedData>speedLimit && !overSpeed)
 	 {
+	    overSpeed=1;
+
 	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
 	    timeStr=asctime(curTime);
 	    timeStr.erase(timeStr.end());
@@ -79,6 +116,19 @@ void dataManagement()
 	    log.close();
 
 	 }
+	 else if(speedData<speedLimit && overSpeed)
+	 {
+	    overSpeed=0;
+
+	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
+	    timeStr=asctime(curTime);
+	    timeStr.erase(timeStr.end());
+	    log << timeStr << " ";
+	    log << "Speed limit no longer exceeded." << std::endl;
+
+	    log.close();
+	 }
+
 
       }
 
@@ -136,8 +186,10 @@ void dataManagement()
 
 	 //if speed > the user set speed limit
 	 //activate audio script and data log
-	 if(speedData>speedLimit)
+	 if(speedData>speedLimit && !overSpeed)
 	 {
+	    overSpeed=1;
+
 	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
 	    timeStr=asctime(curTime);
 	    timeStr.erase(timeStr.end());
@@ -146,6 +198,18 @@ void dataManagement()
 
 	    log.close();
 
+	 }
+	 else if(speedData<speedLimit && overSpeed)
+	 {
+	    overSpeed=0;
+
+	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
+	    timeStr=asctime(curTime);
+	    timeStr.erase(timeStr.end());
+	    log << timeStr << " ";
+	    log << "Speed limit no longer exceeded." << std::endl;
+
+	    log.close();
 	 }
       }
    }

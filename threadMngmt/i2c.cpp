@@ -115,7 +115,7 @@ unsigned char myI2C::Read_Multi_Byte(unsigned char Reg_ADDR, size_t n){
       perror("Write Error in myI2C::Read_Multi_Byte");
    }
    //i2cSetAddress(DEVICE_ADDR);	
-   ssize_t t = read(i2cFile, I2C_RD_Buf, n);
+   size_t t = read(i2cFile, I2C_RD_Buf, n);
    if( t != n)
    {
       cout << "Wanted to read " << n << " bytes, but instead got " << t << ". " <<endl;

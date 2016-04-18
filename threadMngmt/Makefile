@@ -4,14 +4,18 @@
 #OS: Debian                                                     #
 #################################################################
 
+INCLUDE_DIRS = -I/mnt/SD/local/include 
+
 OUTPUTNAME=OBD2demo
 
 #all the project files
 #REPLACE THESE FILES WITH YOUR PROJECT FILES!!!!
-PRJSRC=main.cpp UART.cpp i2c.cpp
+PRJSRC=main.cpp UART.cpp i2c.cpp GUI.cpp query.cpp dataManagement.cpp
 
 #project files as .o files
 OBJECTS= $(PRJSRC:.cpp=.o)
+
+CPPLIBS= -L/mnt/SD/local/lib -lopencv_core -lopencv_flann -lopencv_video -lopencv_videoio -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs
 
 #additional includes
 INCLUDES=
@@ -23,10 +27,10 @@ OPTIMIZE=s
 CC=g++
 
 #compilerflags
-CFLAGS=-c -Wall -std=c++0x ` pkg-config glib-2.0  --cflags --libs`
+CFLAGS=-c -Wall -std=c++0x $(INCLUDE_DIRS) ` pkg-config glib-2.0  --cflags --libs`
 
 #linkerflags
-LDFLAGS=` pkg-config glib-2.0  --cflags --libs`
+LDFLAGS=` pkg-config glib-2.0  --cflags --libs opencv` $(CPPLIBS)
 
 all: $(PRJSRC) $(OUTPUTNAME)
 

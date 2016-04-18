@@ -132,7 +132,6 @@ int UART::receiveLineData(std::string command, int length)
    std::size_t found;
    int count=0;
 
-   int i,x;
    while( !commandFound )
    {
       if(read(fd, &nextChar, 1)==1)

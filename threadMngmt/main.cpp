@@ -8,7 +8,12 @@
 #include "UART.h"
 #include "i2c.h"
 #include <stdio.h>
+#include <thread>
 
+
+#include "GUI.hpp"
+#include "dataManagement.hpp"
+#include "query.hpp"
 //============================
 
 //Globals=====================
@@ -30,7 +35,6 @@ int timeOffset;
 int speedLimit;
 bool forwardMode;
 bool englishUnits;
-std::string control;
 
 //Data Management Globals
 int speedData;
@@ -49,8 +53,11 @@ int main(int argc, char** argv)
 {
    
    //Spawn GUI thread
+   std::thread GUI_thread (GUI);
 
    //Spawn query thread
+   std::thread query_thread (query);
    
    //Spawn data management thread
+   std::thread dataManagement_thread (dataManagement);
 }

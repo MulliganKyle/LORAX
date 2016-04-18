@@ -6,17 +6,16 @@ static gboolean onButtonEvent(GIOChannel *channel,
 			      GIOCondition condition,
 			      gpointer user_data)
 {
-   std::cerr << "onButtonEvent" << std::endl;
    GError *error = 0;
    gsize bytes_read = 0; 
    const int buf_sz = 1024;
    gchar buf[buf_sz] = {};
    g_io_channel_seek_position( channel, 0, G_SEEK_SET, 0 );
    GIOStatus rc = g_io_channel_read_chars( channel,
-	 buf, buf_sz - 1,
-	 &bytes_read,
-	 &error );
-   std::cerr << "rc:" << rc << " data:" << buf << std::endl;
+					   buf, buf_sz - 1,
+					   &bytes_read,
+					   &error );
+
 
    // thank you, call again!
    return 1;
@@ -25,6 +24,25 @@ static gboolean onButtonEvent(GIOChannel *channel,
 
 void query()
 {
+
+////////////////////////////////////////////////
+extern int curSpeed;
+extern int curRPM;
+extern int initFuel, prevFuel, curFuel;
+extern int initDist, curDist;
+extern int curTemp;
+extern int leftDist, rightDist;
+
+//Time Globals
+extern time_t rawTime;
+extern struct tm *prevTime, *curTime;
+extern int timeOffset;
+extern bool forwardMode;
+
+
+
+////////////////////////////////////////////////
+
    UART uart;
    myI2C *sensorPtr0 = new myI2C();
    myI2C *sensorPtr1 = new myI2C();
@@ -90,7 +108,7 @@ void query()
    {
       //Forward Mode
       //======================================
-      if(mode)
+      if(forwardMode)
       {
 
 	 usleep(500000);

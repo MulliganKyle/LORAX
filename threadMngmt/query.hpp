@@ -1,4 +1,3 @@
-//Query header
 #include "UART.h"
 #include "i2c.h"
 
