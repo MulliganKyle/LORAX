@@ -5,35 +5,35 @@
 void dataManagement()
 {
 
-/////////////////////////////
-//Globals used by query thread
-extern int curSpeed;
-extern int curRPM;
-extern int initFuel, curFuel;
-extern int initDist, curDist;
-extern int curTemp;
-extern int leftDist, rightDist;
+   /////////////////////////////
+   //Globals used by query thread
+   extern int curSpeed;
+   extern int curRPM;
+   extern int initFuel, curFuel;
+   extern int initDist, curDist;
+   extern int curTemp;
+   extern int leftDist, rightDist;
 
-//Time Globals
-extern struct tm *curTime;
+   //Time Globals
+   extern struct tm *curTime;
 
-//Initialization and Control Globals
-extern int speedLimit;
-extern bool forwardMode;
-extern bool englishUnits;
+   //Initialization and Control Globals
+   extern int speedLimit;
+   extern bool forwardMode;
+   extern bool englishUnits;
 
-//Data Management Globals
-extern int speedData;
-extern int RPMdata;
-extern int tempData;
-extern int rearData;
-extern float tankSizeLiters;
-extern float tankSizeGallons;
-//float fuelUsed;
-extern float fuelEcon;
-//float distTravelled;
+   //Data Management Globals
+   extern int speedData;
+   extern int RPMdata;
+   extern int tempData;
+   extern int rearData;
+   extern float tankSizeLiters;
+   extern float tankSizeGallons;
+   //float fuelUsed;
+   extern float fuelEcon;
+   //float distTravelled;
 
-/////////////////////////////
+   /////////////////////////////
 
 
 
@@ -55,12 +55,14 @@ extern float fuelEcon;
       {
 	 //set speed data
 	 speedData=curSpeed;
-
+	 usleep(10000);
 	 //calculate the actual RPM
 	 RPMdata=curRPM/4;
+	 usleep(10000);
 
 	 //calculate the actual engine temperature
 	 tempData=curTemp-40;
+	 usleep(10000);
 
 	 //calculate the distance travelled
 	 distTravelled=curDist-initDist;
@@ -70,6 +72,7 @@ extern float fuelEcon;
 
 	 //calculate fuel economy
 	 fuelEcon=(fuelUsed/distTravelled)*100;
+	 usleep(10000);
 
 
 	 //determine which rear distance is closer
@@ -92,6 +95,7 @@ extern float fuelEcon;
 	       rearData=rightDist;
 	    }
 	 }
+	 usleep(10000);
 
 
 	 //if speed > 49 KPH and distance in rear is < 457 cm ~= 15ft
@@ -128,6 +132,7 @@ extern float fuelEcon;
 
 	    log.close();
 	 }
+	 usleep(10000);
 
 
       }
@@ -137,22 +142,27 @@ extern float fuelEcon;
 	 //convert speed
 	 speedMiles= ((float)curSpeed*5)/8;
 	 speedData= (int)(speedMiles+0.5);
+	 usleep(10000);
 
 	 //calculate the actual RPM
 	 RPMdata=curRPM/4;
+	 usleep(10000);
 
 	 //convert temperature
 	 tempF=((((float)(curTemp-40))*9)/5)+32;
 	 tempData=(int)(tempF+0.5);
+	 usleep(10000);
 
 	 //convert fuel economy
 	 distTravelled=curDist-initDist;
 	 distTravelledMiles=(distTravelled*5)/8;
 	 fuelUsed=( (((float)initFuel*100)/255)-(((float)curFuel*100)/255))*tankSizeGallons;
+	 usleep(10000);
 	 //calculate the actual RPM
 	 RPMdata=curRPM/4;
 
 	 fuelEcon=(fuelUsed/distTravelled)*100;
+	 usleep(10000);
 
 	 //determine which rear distance is closer
 	 if(leftDist==0 && rightDist==0)
@@ -175,6 +185,7 @@ extern float fuelEcon;
 	       rearData=(rightDist*3937)/10000;
 	    }
 	 }
+	 usleep(10000);
 
 
 	 //if speed > 49 KPH and distance in rear is < 457 cm ~= 15ft
@@ -211,6 +222,7 @@ extern float fuelEcon;
 
 	    log.close();
 	 }
+	 usleep(10000);
       }
    }
 }

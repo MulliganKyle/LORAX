@@ -7,3 +7,5 @@
 #include <iostream>
 
 int GUI();
+std::string intToString(int);
+std::string displayConfig(); 

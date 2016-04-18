@@ -60,4 +60,11 @@ int main(int argc, char** argv)
    
    //Spawn data management thread
    std::thread dataManagement_thread (dataManagement);
+
+
+
+   //synchronize threads:
+   GUI_thread.join();
+   query_thread.join();
+   dataManagement_thread.join();
 }

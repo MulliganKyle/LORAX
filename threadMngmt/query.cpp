@@ -6,6 +6,7 @@ static gboolean onButtonEvent(GIOChannel *channel,
 			      GIOCondition condition,
 			      gpointer user_data)
 {
+   extern bool forwardMode;
    GError *error = 0;
    gsize bytes_read = 0; 
    const int buf_sz = 1024;
@@ -16,7 +17,7 @@ static gboolean onButtonEvent(GIOChannel *channel,
 					   &bytes_read,
 					   &error );
 
-
+   forwardMode=buf;
    // thank you, call again!
    return 1;
 }
@@ -85,6 +86,11 @@ extern bool forwardMode;
    prevTime->tm_hour+=timeOffset;
    curTime=localtime(&rawTime);
    curTime->tm_hour+=timeOffset;
+   if(prevTime->tm_hour<0)
+   {
+      prevTime->tm_hour+=24;
+      curTime->tm_hour+=24;
+   }
    //======================================
    usleep(500000);
 
@@ -130,6 +136,10 @@ extern bool forwardMode;
 	 time(&rawTime);
 	 curTime=localtime(&rawTime);
 	 curTime->tm_hour+=timeOffset;
+	 if(curTime->tm_hour < 0)
+	 {
+	    curTime->tm_hour+=24;
+	 }
 	 //======================================
 
 	 usleep(500000);
@@ -139,6 +149,10 @@ extern bool forwardMode;
 	 {
 	    prevTime=localtime(&rawTime);
 	    prevTime->tm_hour+=timeOffset;
+	    if(prevTime->tm_hour < 0)
+	    {
+	       prevTime->tm_hour+=24;
+	    }
 	    uart.sendLine(Fuel);
 	    curFuel=uart.receiveLineData("012F41 2F ",2);
 	    usleep(500000);
