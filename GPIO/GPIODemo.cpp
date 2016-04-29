@@ -4,6 +4,7 @@
 
  
 bool mode;
+int theValue;
    static gboolean
 onButtonEvent( GIOChannel *channel,
       GIOCondition condition,
@@ -21,7 +22,10 @@ onButtonEvent( GIOChannel *channel,
 	 &error );
    std::cerr << "rc:" << rc << " data:" << buf << std::endl;
 
-mode=buf;
+mode=(int)buf[0]-48;
+theValue=(int)buf[0]-48;
+std::cout<<"value: " << theValue << std::endl;
+std::cout<<"mode: " << mode << std::endl;
    // thank you, call again!
    return 1;
 }

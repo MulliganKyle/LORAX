@@ -14,6 +14,8 @@
 #include "GUI.hpp"
 #include "dataManagement.hpp"
 #include "query.hpp"
+#include "mockQuery.hpp"
+
 //============================
 
 //Globals=====================
@@ -31,21 +33,23 @@ time_t rawTime;
 struct tm *prevTime, *curTime;
 
 //Initialization and Control Globals
-int timeOffset;
-int speedLimit;
-bool forwardMode;
-bool englishUnits;
+int timeOffset=-7;
+int speedLimit=65;
+bool forwardMode=1;
+bool englishUnits=0;
+bool overSpeed=0;
 
 //Data Management Globals
 int speedData;
 int RPMdata;
 int tempData;
 int rearData;
-float tankSizeLiters;
-float tankSizeGallons;
+float tankSizeLiters=99;
+float tankSizeGallons=26;
 //float fuelUsed;
 float fuelEcon;
 //float distTravelled;
+int fuelPercent;
 
 //============================
 
@@ -57,7 +61,9 @@ int main(int argc, char** argv)
 
    //Spawn query thread
    std::thread query_thread (query);
-   
+   //std::thread mockQuery_thread(mockQuery);
+
+
    //Spawn data management thread
    std::thread dataManagement_thread (dataManagement);
 
@@ -66,5 +72,6 @@ int main(int argc, char** argv)
    //synchronize threads:
    GUI_thread.join();
    query_thread.join();
+   //mockQuery_thread.join();
    dataManagement_thread.join();
 }

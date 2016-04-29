@@ -129,8 +129,8 @@ int UART::receiveLineData(std::string command, int length)
    std::string dataStr;
    int data;
    bool commandFound=0;
-   std::size_t found;
-   int count=0;
+   std::size_t found, noData;
+   int count=0, stuckCount=0;
 
    while( !commandFound )
    {
@@ -146,7 +146,12 @@ int UART::receiveLineData(std::string command, int length)
       {
 	 commandFound=1;
       }
-      usleep(1);
+      noData=receivedString.find("NO DATA");
+      if(noData!=std::string::npos || stuckCount>1000000)
+      {
+	 return -1;
+      }
+      stuckCount++;
    }
 
    while(count<=length)
@@ -157,7 +162,6 @@ int UART::receiveLineData(std::string command, int length)
 	 dataStr+=nextChar;
 	 count++;
       }
-      usleep(1);
    }
    if(length>4)
    {

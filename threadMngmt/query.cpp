@@ -2,9 +2,7 @@
 #include "query.hpp"
 
 
-static gboolean onButtonEvent(GIOChannel *channel,
-			      GIOCondition condition,
-			      gpointer user_data)
+static gboolean onButtonEvent(GIOChannel *channel, GIOCondition condition, gpointer user_data)
 {
    extern bool forwardMode;
    GError *error = 0;
@@ -13,12 +11,11 @@ static gboolean onButtonEvent(GIOChannel *channel,
    gchar buf[buf_sz] = {};
    g_io_channel_seek_position( channel, 0, G_SEEK_SET, 0 );
    GIOStatus rc = g_io_channel_read_chars( channel,
-					   buf, buf_sz - 1,
-					   &bytes_read,
-					   &error );
+	 buf, buf_sz - 1,
+	 &bytes_read,
+	 &error );
 
-   forwardMode=buf;
-   // thank you, call again!
+   forwardMode=(int)buf[0]-48;
    return 1;
 }
 
@@ -26,36 +23,38 @@ static gboolean onButtonEvent(GIOChannel *channel,
 void query()
 {
 
-////////////////////////////////////////////////
-extern int curSpeed;
-extern int curRPM;
-extern int initFuel, prevFuel, curFuel;
-extern int initDist, curDist;
-extern int curTemp;
-extern int leftDist, rightDist;
+   ////////////////////////////////////////////////
+   extern int curSpeed;
+   extern int curRPM;
+   extern int initFuel, prevFuel, curFuel;
+   extern int initDist, curDist;
+   extern int curTemp;
+   extern int leftDist, rightDist;
 
-//Time Globals
-extern time_t rawTime;
-extern struct tm *prevTime, *curTime;
-extern int timeOffset;
-extern bool forwardMode;
+   //Time Globals
+   extern time_t rawTime;
+   extern struct tm *prevTime, *curTime;
+   extern int timeOffset;
+   extern bool forwardMode;
 
 
 
-////////////////////////////////////////////////
+   ////////////////////////////////////////////////
 
+
+   int temp, count=0;
    UART uart;
    myI2C *sensorPtr0 = new myI2C();
    myI2C *sensorPtr1 = new myI2C();
 
    std::string RPM="010C\r";
    std::string Speed="010D\r";
-   std::string Temp="0105\r";
+   std::string Temperature="0105\r";
    std::string Fuel="012F\r";
    std::string Dist="0131\r";
 
-   sensorPtr0->i2cSetAddress(DEVICE_ADDR0);
-   sensorPtr1->i2cSetAddress(DEVICE_ADDR1);
+   //   sensorPtr0->i2cSetAddress(DEVICE_ADDR0);
+   //   sensorPtr1->i2cSetAddress(DEVICE_ADDR1);
 
    uart.initUart();
 
@@ -67,7 +66,7 @@ extern bool forwardMode;
    guint id = g_io_add_watch( channel, cond, onButtonEvent, 0 );
 
 
-   usleep(500000);
+   usleep(5000000);
 
 
 
@@ -75,8 +74,16 @@ extern bool forwardMode;
    //Get initial Distance
    //======================================
    uart.sendLine(Dist);
-   initDist=uart.receiveLineData("013141 31 ",5);
-   curDist=initDist;
+   temp=-1;
+   while(temp==-1)
+   {
+      if ((temp=uart.receiveLineData("013141 31 ",5))!=-1)
+      {
+	 initDist=temp;
+	 curDist=initDist;
+      }
+      usleep(500000);
+   }
    //======================================
 
    //Get initial time
@@ -92,23 +99,36 @@ extern bool forwardMode;
       curTime->tm_hour+=24;
    }
    //======================================
-   usleep(500000);
 
    //Get initial fuel level
    //======================================
    uart.sendLine(Fuel);
-   initFuel=uart.receiveLineData("012F41 2F ",2);
-   prevFuel=initFuel;
-   curFuel=initFuel;
+   temp=-1;
+   while(temp==-1)
+   {
+      if ((temp=uart.receiveLineData("012F41 2F ",2))!=-1)
+      {
+	 initFuel=temp;
+	 prevFuel=initFuel;
+	 curFuel=initFuel;
+      }
+      usleep(500000);
+   }
    //======================================
-   usleep(500000);
 
    //Query for Engine Temp
    //======================================
-   uart.sendLine(Temp);
-   curTemp=uart.receiveLineData("010541 05 ",2);
+   uart.sendLine(Temperature);
+   temp=-1;
+   while(temp==-1)
+   {
+      if ((temp=uart.receiveLineData("010541 05 ",2))!=-1)
+      {
+	 curTemp=temp;
+      }
+      usleep(500000);
+   }
    //======================================
-   usleep(500000);
 
    while(1)
    {
@@ -117,18 +137,23 @@ extern bool forwardMode;
       if(forwardMode)
       {
 
-	 usleep(500000);
 	 //Query for Speed
 	 //======================================
 	 uart.sendLine(Speed);
-	 curSpeed=uart.receiveLineData("010D41 0D ",2);
+	 if ((temp=uart.receiveLineData("010D41 0D ",2))!=-1)
+	 {
+	    curSpeed=temp;
+	 }
 	 //======================================
 
 	 usleep(500000);
 	 //Query for RPM
 	 //======================================
 	 uart.sendLine(RPM);
-	 curRPM=uart.receiveLineData("010C41 0C ",5);
+	 if ((temp=uart.receiveLineData("010C41 0C ",5))!=-1)
+	 {
+	    curRPM=temp;
+	 }
 	 //======================================
 
 	 //Get the time
@@ -145,8 +170,9 @@ extern bool forwardMode;
 	 usleep(500000);
 	 //if it's been a minute, check fuel level and engine Temp
 	 //======================================
-	 if(curTime->tm_min!=prevTime->tm_min)
+	 if(count>99)
 	 {
+	    count=0;
 	    prevTime=localtime(&rawTime);
 	    prevTime->tm_hour+=timeOffset;
 	    if(prevTime->tm_hour < 0)
@@ -154,18 +180,23 @@ extern bool forwardMode;
 	       prevTime->tm_hour+=24;
 	    }
 	    uart.sendLine(Fuel);
-	    curFuel=uart.receiveLineData("012F41 2F ",2);
+	    if ((temp=uart.receiveLineData("012F41 2F ",2))!=-1)
+	    {
+	       curFuel=temp;
+	    }
 	    usleep(500000);
 
 	    //Query for Engine Temp
 	    //======================================
-	    uart.sendLine(Temp);
-	    curTemp=uart.receiveLineData("010541 05 ",2);
+	    if ((temp=uart.receiveLineData("010541 05 ",2))!=-1)
+	    {
+	       curTemp=temp;
+	    }
 	    //======================================
+	    usleep(500000);
 	 }
 	 //======================================
 
-	 usleep(500000);
 	 //if the fuel level has changed,
 	 //check distance
 	 //======================================
@@ -173,7 +204,11 @@ extern bool forwardMode;
 	 {
 	    prevFuel=curFuel;
 	    uart.sendLine(Dist);
-	    curDist=uart.receiveLineData("013141 31 ",4);
+	    if ((temp=uart.receiveLineData("013141 31 ",4))!=-1)
+	    {
+	       curDist=temp;
+	    }
+	    usleep(500000);
 	 }
 
 	 //if the speed is greater than 30MPH or 49 KPH
@@ -181,14 +216,16 @@ extern bool forwardMode;
 	 //======================================
 	 if(curSpeed > 49)
 	 {
-	    sensorPtr0->Send_I2C_Byte(0x00, 0x51);
-	    usleep(68E3);
-	    leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
-	    sensorPtr1->Send_I2C_Byte(0x00, 0x51);
-	    usleep(68E3);
-	    rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);
+	    /*sensorPtr0->Send_I2C_Byte(0x00, 0x51);
+	      usleep(68E3);
+	      leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
+	      sensorPtr1->Send_I2C_Byte(0x00, 0x51);
+	      usleep(68E3);
+	      rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);*/
 	 }
 	 //======================================
+      
+      count++;
 
       }
       //======================================
@@ -197,14 +234,15 @@ extern bool forwardMode;
       //======================================
       else
       {
+	 usleep(1000000);
 	 //Query reverse distance as much as possible
 	 //======================================
-	 sensorPtr0->Send_I2C_Byte(0x00, 0x51);
-	 usleep(68E3);
-	 leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
-	 sensorPtr1->Send_I2C_Byte(0x00, 0x51);
-	 usleep(68E3);
-	 rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);
+	 /*sensorPtr0->Send_I2C_Byte(0x00, 0x51);
+	   usleep(68E3);
+	   leftDist=sensorPtr0->Read_2I2C_Bytes(0x02);
+	   sensorPtr1->Send_I2C_Byte(0x00, 0x51);
+	   usleep(68E3);
+	   rightDist=sensorPtr1->Read_2I2C_Bytes(0x02);*/
 	 //======================================
 
       }

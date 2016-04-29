@@ -31,6 +31,8 @@ void dataManagement()
    extern float tankSizeGallons;
    //float fuelUsed;
    extern float fuelEcon;
+   extern int fuelPercent;
+   extern bool overSpeed;
    //float distTravelled;
 
    /////////////////////////////
@@ -45,7 +47,6 @@ void dataManagement()
    std::fstream log;
    std::string timeStr;
 
-   bool overSpeed=0;
 
 
 
@@ -67,7 +68,8 @@ void dataManagement()
 	 //calculate the distance travelled
 	 distTravelled=curDist-initDist;
 
-	 //caluclate how much fuel has been used
+	 //caluclat e how much fuel has been used
+	 fuelPercent=(curFuel*100)/255;
 	 fuelUsed=( (((float)initFuel*100)/255)-(((float)curFuel*100)/255))*tankSizeLiters;
 
 	 //calculate fuel economy
@@ -110,7 +112,7 @@ void dataManagement()
 	 if(speedData>speedLimit && !overSpeed)
 	 {
 	    overSpeed=1;
-
+	    system("sudo /home/devuser/LORAX/threadMngmt/audio.sh");
 	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
 	    timeStr=asctime(curTime);
 	    timeStr.erase(timeStr.end());
@@ -199,8 +201,9 @@ void dataManagement()
 	 //activate audio script and data log
 	 if(speedData>speedLimit && !overSpeed)
 	 {
-	    overSpeed=1;
 
+	    overSpeed=1;
+	    system("/home/devuser/LORAX/threadMngmt/audio.sh");
 	    log.open("/mnt/SD/logs/log.txt", std::fstream::out | std::fstream::app);
 	    timeStr=asctime(curTime);
 	    timeStr.erase(timeStr.end());
@@ -224,5 +227,6 @@ void dataManagement()
 	 }
 	 usleep(10000);
       }
+      //std::cout<< "speed: "<< speedData << "; RPM: " << RPMdata << "; Temp: " << tempData<< std::endl;
    }
 }

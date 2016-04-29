@@ -19,8 +19,10 @@ int GUI()
    extern int rearData;
    extern struct tm *curTime;
    extern bool forwardMode;
+   extern int fuelPercent;
+   extern bool overSpeed;
 
-   string control = "1235";
+   string control = "1356";
    //control = displayConfig();
 
    Mat img(240, 480, CV_8UC3, Scalar::all(0));
@@ -41,12 +43,7 @@ int GUI()
    string rpmUnit = " RPM";
    string rearDistUnit = " CM";
    string tempUnit = " DEG C";
-
-
-   line(img, Point(img.cols/2, 0), Point(img.cols/2, img.rows), Scalar(0,0,255));
-   line(img, Point(0, img.rows/2), Point(img.cols, img.rows/2), Scalar(0,0,255));
-
-   imshow("Test", img);
+   string fuelPercentUnit = " %";
 
    VideoCapture cap(0);
    if(!cap.isOpened())
@@ -55,10 +52,34 @@ int GUI()
    cap.set(CAP_PROP_FRAME_HEIGHT, HRES);
    cap.set(CAP_PROP_FRAME_WIDTH, VRES);
 
+   imshow("LORAX", img);
+   waitKey(5);
+
+   string initText = "Initializing";
+   Size initSize = getTextSize(initText, fontFace, fontScale, thickness, &baseline);
+   Point initOrg((posX/2) - (initSize.width/2), (posY/2) - (initSize.height/2));
+   putText(img, initText, initOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
+
+   for(int x=0; x<500; x++)
+   {
+      imshow("LORAX", img);
+      waitKey(5);
+   }
+
+   sleep(7); 
+
+
    while(1)
    {	
       if(forwardMode) 
       {
+
+	 img = Scalar(0, 0, 0);
+
+	 line(img, Point(img.cols/2, 0), Point(img.cols/2, img.rows), Scalar(0,0,255));
+	 line(img, Point(0, img.rows/2), Point(img.cols, img.rows/2), Scalar(0,0,255));
+
+
 	 for(int quadrant=0;quadrant<4;quadrant++)
 	 {
 	    if(quadrant%2==0)
@@ -83,11 +104,18 @@ int GUI()
 	    {
 	       case 1: 
 		  {
-
 		     string speedText = intToString(speedData) + speedUnit;
 		     Size speedSize = getTextSize(speedText, fontFace, fontScale, thickness, &baseline);
 		     Point speedOrg(tempX - (speedSize.width/2), tempY - (speedSize.height/2));
-		     putText(img, speedText, speedOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
+		     if(overSpeed==1)
+		     {
+			putText(img, speedText, speedOrg, fontFace, fontScale, Scalar(0,0,255), thickness, 8);
+		     }
+		     else
+		     {
+			putText(img, speedText, speedOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
+		     }
+		     
 		     break;
 		  }
 	       case 2:
@@ -101,7 +129,6 @@ int GUI()
 		  }
 	       case 3:
 		  {
-
 		     string rpmText = intToString(RPMdata) + rpmUnit;
 		     Size rpmSize = getTextSize(rpmText, fontFace, fontScale, thickness, &baseline);
 		     Point rpmOrg(tempX - (rpmSize.width/2), tempY - (rpmSize.height/2));
@@ -133,9 +160,16 @@ int GUI()
 		     putText(img, timeText, timeOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
 		     break;
 		  }
+	       case 7:
+		  {
+		     string fuelPercentText = intToString(fuelPercent) + fuelPercentUnit;
+		     Size fuelPercentSize = getTextSize(fuelPercentText, fontFace, fontScale, thickness, &baseline);
+		     Point tempOrg(tempX - (fuelPercentSize.width/2), tempY - (fuelPercentSize.height/2));
+		     putText(img, fuelPercentText, tempOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
+		  }
 	    }	
 	 }
-	 imshow("Test", img);
+	 imshow("LORAX", img);
 	 waitKey(5);
 
       }
@@ -143,7 +177,7 @@ int GUI()
       else 
       {
 	 cap >> frame;
-	 imshow("Test", frame);
+	 imshow("LORAX", frame);
          waitKey(5);
       } 
    }
@@ -171,6 +205,7 @@ string displayConfig()
       cout << "4: Rear distance" << endl;
       cout << "5: Engine temperature" << endl;
       cout << "6: Clock" << endl;
+      cout << "7: Fuel Percent" << endl;
       cin >> option;
       config[position] = option;
    }
