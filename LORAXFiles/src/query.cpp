@@ -41,6 +41,7 @@ void query()
 
    ////////////////////////////////////////////////
 
+
    int temp, count=0;
    UART uart;
    myI2C *sensorPtr0 = new myI2C();
@@ -66,6 +67,7 @@ void query()
 
 
    usleep(5000000);
+
 
 
 

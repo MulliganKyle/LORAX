@@ -22,7 +22,7 @@ int GUI()
    extern int fuelPercent;
    extern bool overSpeed;
 
-   string control = "1111";
+   string control = "1356";
    //control = displayConfig();
 
    Mat img(240, 480, CV_8UC3, Scalar::all(0));
@@ -59,23 +59,21 @@ int GUI()
    Size initSize = getTextSize(initText, fontFace, fontScale, thickness, &baseline);
    Point initOrg((posX/2) - (initSize.width/2), (posY/2) - (initSize.height/2));
    putText(img, initText, initOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
-std::cout << "here1 in GUI" << std::endl;
+
    for(int x=0; x<500; x++)
    {
       imshow("LORAX", img);
       waitKey(5);
    }
 
-std::cout << "here2 in GUI" << std::endl;
    sleep(7); 
 
-std::cout << "here3 in GUI" << std::endl;
 
    while(1)
    {	
       if(forwardMode) 
       {
-std::cout << "here4 in GUI" <<std::endl;
+
 	 img = Scalar(0, 0, 0);
 
 	 line(img, Point(img.cols/2, 0), Point(img.cols/2, img.rows), Scalar(0,0,255));
